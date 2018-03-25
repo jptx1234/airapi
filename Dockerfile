@@ -7,6 +7,9 @@ ARG WORK_PATH=/home/app
 WORKDIR $WORK_PATH
 
 
+RUN rm -rf *
+
+
 COPY ./target/airapi.war $WORK_PATH/ROOT.war
 
 
