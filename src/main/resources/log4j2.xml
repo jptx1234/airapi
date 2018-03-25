@@ -73,8 +73,8 @@
     <Loggers>
     <!-- 配置日志的根节点，建立一个默认的root的logger，需要在root的level中指定输出的级别  -->
         <Root level="info">
-            <!-- <AppenderRef ref="asyncAppLog"/> -->
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="asyncAppLog"/>
+            <!-- <AppenderRef ref="Console"/> -->
         </Root>
         <AsyncLogger name="logger.error" level="info" additivity="false">
             <AppenderRef ref="asyncErrorLog"/>
