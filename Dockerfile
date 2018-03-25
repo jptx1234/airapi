@@ -1,13 +1,10 @@
-FROM tomcat:8-slim
+FROM bluerain/java-10-buildpack:tomcat
 
 
-ARG WORK_PATH=/usr/local/tomcat/webapps
+ARG WORK_PATH=/home/app
 
 
 WORKDIR $WORK_PATH
-
-
-RUN rm -rf * -R
 
 
 COPY ./target/airapi.war $WORK_PATH/ROOT.war
