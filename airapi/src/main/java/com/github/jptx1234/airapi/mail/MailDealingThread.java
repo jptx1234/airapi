@@ -4,7 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeUtility;
 
@@ -104,7 +107,10 @@ public class MailDealingThread extends Thread {
 
 	public String getMessageContent(MailMessage message) {
 		String boundary = null;
-		String contentType = message.getFirstHeaderValue("Content-type");
+		String contentType = message.getFirstHeaderValue("Content-Type");
+		if(contentType == null) {
+			contentType = message.getFirstHeaderValue("Content-type");
+		}
 		if (contentType != null) {
 			String[] contentTypeValues = contentType.split(";");
 			for (String contentTypeValue : contentTypeValues) {
@@ -119,38 +125,61 @@ public class MailDealingThread extends Thread {
 		}
 
 		String body = message.getBody();
-		if (boundary != null && body != null) {
-			String[] bodyLines = body.split("\n");
-			StringBuilder bodyBuilder = new StringBuilder();
-			String boundaryBegin = "--" + boundary;
-			String boundaryEnd = "--" + boundary + "--";
-			boolean contentStart = false;
-			for (String bodyLine : bodyLines) {
-				if (boundaryBegin.equals(bodyLine)) {
-					contentStart = true;
-					continue;
+		if (boundary == null || body == null) {
+			return "";
+		}
+		
+		List<String> bodies = new ArrayList<>();
+		
+		String[] bodyLines = body.split("\n");
+		String boundaryBegin = "--" + boundary;
+		String boundaryEnd = "--" + boundary + "--";
+		StringBuilder bodyBuilder = new StringBuilder();
+		boolean contentStart = false;
+		for (String bodyLine : bodyLines) {
+			if (boundaryBegin.equals(bodyLine)) {
+				if(contentStart && bodyBuilder.length() > 0) {
+					//把这一部分保存下来，开始第二部分
+					bodies.add(bodyBuilder.toString());
+					bodyBuilder = new StringBuilder();
 				}
-				if (boundaryEnd.equals(bodyLine)) {
-					break;
-				}
-				if (contentStart) {
-					bodyBuilder.append(bodyLine).append("\n");
-				}
+				contentStart = true;
+				continue;
 			}
-			body = bodyBuilder.toString();
+			if (boundaryEnd.equals(bodyLine)) {
+				break;
+			}
+			if (contentStart) {
+				bodyBuilder.append(bodyLine).append("\n");
+			}
+		}
+		if(bodyBuilder.length() > 0) {
+			bodies.add(bodyBuilder.toString());
+			bodyBuilder = new StringBuilder();
+		}
+		
+		String finalBody = "";
+		
+		for (String bodyPart : bodies) {
+			InputStream is = new ByteArrayInputStream(bodyPart.getBytes(StandardCharsets.UTF_8));
+			try {
+				MimeBodyPart mimeBody = new MimeBodyPart(is);
+				Object content = mimeBody.getContent();
+				String partContentType = mimeBody.getContentType();
+				if(partContentType == null || partContentType.contains("text/plain")) {
+					if("".equals(finalBody)) {
+						finalBody = content == null ? "" : content.toString();
+					}
+				}else if(partContentType.contains("text/html")) {
+					finalBody = content == null ? "" : content.toString();
+				}
+			} catch (Exception e) {
+				logger.error("解析邮件正文出错", e);
+			}
 		}
 
-		InputStream is = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
-		try {
-			MimeBodyPart mimeBody = new MimeBodyPart(is);
-			Object content = mimeBody.getContent();
 
-			return content == null ? "" : content.toString();
-		} catch (Exception e) {
-			logger.error("解析邮件正文出错", e);
-		}
-
-		return "";
+		return finalBody;
 	}
 
 }
