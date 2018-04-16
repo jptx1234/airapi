@@ -20,10 +20,10 @@ public interface MailDao {
 	@Select("SELECT a.`id` AS id, a.`from_address` AS sender, DATE_FORMAT(a.`receive_time`, '%Y-%m-%d %H:%i:%S') AS receiveTime, a.`subject` AS subject  FROM temp_mail a WHERE a.`account` = #{account, jdbcType=VARCHAR} AND a.`status` = 1 ORDER BY a.`receive_time` DESC")
 	public List<Map<String, String>> listMails(@Param("account")String account);
 	
-	@Select("SELECT a.`id` AS id, a.`from_address` AS sender, DATE_FORMAT(a.`receive_time`, '%Y-%m-%d %H:%i:%S') AS receiveTime, a.`subject` AS subject  FROM temp_mail a WHERE a.`account` = #{account, jdbcType=VARCHAR} AND a.`from_address` = #{sender, jdbcType=VARCHAR} AND a.`status` = 1 ORDER BY a.`receive_time` DESC")
+	@Select("SELECT a.`id` AS id, a.`from_address` AS sender, DATE_FORMAT(a.`receive_time`, '%Y-%m-%d %H:%i:%S') AS receiveTime, a.`subject` AS subject  FROM temp_mail a WHERE a.`account` = #{account, jdbcType=VARCHAR} AND INSTR(a.`from_address`, #{sender, jdbcType=VARCHAR}) > 0 AND a.`status` = 1 ORDER BY a.`receive_time` DESC")
 	public List<Map<String, String>> listMailsBySender(@Param("account")String account, @Param("sender")String sender);
 
-	@Select("SELECT a.`id` AS id, a.`from_address` AS sender, DATE_FORMAT(a.`receive_time`, '%Y-%m-%d %H:%i:%S') AS receiveTime, a.`subject` AS subject  FROM temp_mail a WHERE a.`account` = #{account, jdbcType=VARCHAR} AND a.`subject` = #{subject, jdbcType=VARCHAR} AND a.`status` = 1 ORDER BY a.`receive_time` DESC")
+	@Select("SELECT a.`id` AS id, a.`from_address` AS sender, DATE_FORMAT(a.`receive_time`, '%Y-%m-%d %H:%i:%S') AS receiveTime, a.`subject` AS subject  FROM temp_mail a WHERE a.`account` = #{account, jdbcType=VARCHAR} AND INSTR(a.`subject`, #{subject, jdbcType=VARCHAR}) > 0 AND a.`status` = 1 ORDER BY a.`receive_time` DESC")
 	public List<Map<String, String>> listMailsBySubject(@Param("account")String account, @Param("subject")String subject);
 	
 	@Select("SELECT a.`content` FROM temp_mail a WHERE a.`id` = #{id, jdbcType=BIGINT}")

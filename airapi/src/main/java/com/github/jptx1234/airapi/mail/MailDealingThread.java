@@ -74,11 +74,24 @@ public class MailDealingThread extends Thread {
 		if (fromAddress == null) {
 			fromAddress = message.getFirstHeaderValue("Sender");
 		}
+		
+		try {
+			fromAddress = MimeUtility.decodeText(fromAddress);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("收邮件时解析发件人编码未识别", e);
+		}
+		
 		fromAddress = fromAddress.toLowerCase();
 		
 		logger.info("邮件发送者：" + fromAddress);
 		
 		String account = message.getFirstHeaderValue("To").toLowerCase();
+		
+		try {
+			account = MimeUtility.decodeText(account);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("收邮件时解析收件人编码未识别", e);
+		}
 		
 		logger.info("邮件接收者：" + account);
 		
