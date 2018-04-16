@@ -46,6 +46,11 @@
 		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
 	</listener>
 
+	<!-- 静态资源 -->
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/index.html</url-pattern>
+	</servlet-mapping>
 
 
 	<!-- servlet配置 -->

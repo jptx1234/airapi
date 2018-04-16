@@ -30,8 +30,10 @@
 				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter" />
 		</mvc:message-converters>
 	</mvc:annotation-driven>
+	<!-- 跨域配置 -->
 	<mvc:cors>
 		<mvc:mapping path="/**" />
 	</mvc:cors>
-	
+	<!-- 静态资源 -->
+	<mvc:default-servlet-handler/>
 </beans>  
