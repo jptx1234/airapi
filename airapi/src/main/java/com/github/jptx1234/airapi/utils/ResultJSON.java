@@ -2,6 +2,8 @@ package com.github.jptx1234.airapi.utils;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -42,7 +44,7 @@ public class ResultJSON extends JSONObject {
 	
 	public ResultJSON setMsg(Throwable e) {
 		String exceptionMsg = e.getLocalizedMessage();
-		if(exceptionMsg == null || exceptionMsg.trim().length() <= 0) {
+		if(StringUtils.isEmpty(exceptionMsg)) {
 			exceptionMsg = e.getClass().getSimpleName();
 		}
 		

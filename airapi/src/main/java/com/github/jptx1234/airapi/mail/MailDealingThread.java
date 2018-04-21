@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeUtility;
@@ -24,7 +26,7 @@ public class MailDealingThread extends Thread {
 
 	private LinkedList<MailMessage> messageList;
 	private boolean runFlag;
-	private long sleepTime = 3000L;
+	private long sleepTime = 3L;
 
 	@Autowired
 	private MailDao mailDao;
@@ -52,7 +54,7 @@ public class MailDealingThread extends Thread {
 			MailMessage message = this.messageList.pollFirst();
 			if (message == null) {
 				try {
-					Thread.sleep(sleepTime);
+					TimeUnit.SECONDS.sleep(sleepTime);
 					continue;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -138,8 +140,9 @@ public class MailDealingThread extends Thread {
 		}
 
 		String body = message.getBody();
+		
 		if (boundary == null || body == null) {
-			return "";
+			return Objects.toString(body, "");
 		}
 		
 		List<String> bodies = new ArrayList<>();
