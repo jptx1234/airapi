@@ -50,6 +50,7 @@ public class MailDealingThread extends Thread {
 
 	@Override
 	public void run() {
+		logger.info("邮件处理线程开始运行");
 		while (runFlag) {
 			MailMessage message = this.messageList.pollFirst();
 			if (message == null) {

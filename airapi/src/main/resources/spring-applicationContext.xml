@@ -18,7 +18,7 @@
 
 	<bean class="com.github.jptx1234.airapi.mail.MailDealingThread"
 		init-method="start" destroy-method="stopThread" lazy-init="false">
-		<property name="sleepTime" value="3000" />
+		<property name="sleepTime" value="3" />
 	</bean>
 	
 	<bean id="airapiMailStore"
