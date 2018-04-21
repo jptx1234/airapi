@@ -2,7 +2,7 @@
 
 ## 总览
 
-baseURL：http://airapi.jptx.me
+baseURL：https://airapi.jptx.me
 
 不区分GET和POST，除特殊说明以外，任何参数都不能为空。
 
