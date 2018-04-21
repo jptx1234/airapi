@@ -2,6 +2,7 @@ package com.github.jptx1234.airapi.controller;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class AccountController {
 		try {
 			String flag = accountDao.getFlag(email, coin);
 			if(flag == null) {
-				flag = "";
+				flag = StringUtils.EMPTY;
 			}
 			resultJson.putData("flag", flag);
 			logger.info("邮箱"+email+"，币种"+coin+"账户flag为"+flag);
